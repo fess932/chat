@@ -1,73 +1,45 @@
 <template>
   <div>
-    {{ messages }}
-    <div v-for="(message, key) in messages" :key="key">
-      <div class="message_container">
-        {{ message.message }}
-      </div>
-    </div>
+    <button @click="rooms.findRoom">Click</button>
     <hr />
-
-    <div class="input">
-      <textarea
-        v-model="newMessage"
-        placeholder="Пишите..."
-        @keyup.enter.exact="sendMessage"
-      ></textarea>
-      <button @click="sendMessage">></button>
-    </div>
+    <textarea @keyup.enter.exact="rooms.sendMessage"></textarea>
+    <hr />
+    {{ rooms }}
   </div>
 </template>
 
 <script lang="ts">
-import { ref, reactive, computed, onMounted } from 'vue'
-const serverUrl = 'ws://localhost:8080/ws'
+import { Rooms } from './room'
+import { ref, reactive, computed, onMounted, Ref } from 'vue'
+const serverUrl = 'ws://localhost:8000/ws'
 
 export default {
   setup() {
-    onMounted(() => {
-      connectToWebSocket()
-    })
+    const rooms = connectToWebSocket()
 
-    return {
-      ws,
-      messages,
-      newMessage,
-      sendMessage,
-    }
+    return { rooms }
   },
 }
 
-const ws = ref<WebSocket>()
+function connectToWebSocket(): Rooms {
+  const ws = new WebSocket(`${serverUrl}?name=${user.name}`)
+  const rooms = new Rooms(ws)
 
-function connectToWebSocket() {
-  ws.value = new WebSocket(serverUrl)
-  ws.value.addEventListener('open', (e) => {
+  ws.addEventListener('open', (e) => {
     console.log('web soc op!', e)
   })
 
-  ws.value.addEventListener('message', (e) => {
-    console.log('message!', e)
-    handleNewMessage(e)
+  ws.addEventListener('message', (e) => {
+    rooms.handleNewMessage(e)
   })
+
+  return rooms
 }
 
-const messages = ref([''])
-function handleNewMessage(e: MessageEvent) {
-  let data = e.data
-  data = data.split(/\r?\n/)
-  for (let i = 0; i < data.length; i++) {
-    let msg = JSON.parse(data[i])
-    messages.value.push(msg)
-  }
-}
+// rooms
 
-const newMessage = ref('')
-function sendMessage() {
-  if (newMessage.value !== '' && ws.value !== undefined) {
-    const msg = JSON.stringify({ message: newMessage.value })
-    ws.value.send(msg)
-    newMessage.value = ''
-  }
+const roomInput = null
+const user = {
+  name: 'sample',
 }
 </script>

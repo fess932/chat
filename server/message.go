@@ -8,18 +8,23 @@ import (
 const SendMessageAction = "send-message"
 const JoinRoomAction = "join-room"
 const LeaveRoomAction = "leave-room"
+const UserJoinedAction = "user-join"
+const UserLeftAction = "user-left"
+const JoinRoomPrivateAction = "join-room-private"
+const RoomJoinedAction = "room-joined"
 
 type Message struct {
-	Action  string `json:"action"`
-	Message string `json:"message"`
-	Target  string `json:"target"`
-	Sender  *Client
+	Action  string  `json:"action"`
+	Message string  `json:"message"`
+	Target  *Room   `json:"target"`
+	Sender  *Client `json:"sender"`
 }
 
 func (message *Message) encode() []byte {
-	jsn, err := json.Marshal(message)
+	json, err := json.Marshal(message)
 	if err != nil {
 		log.Println(err)
 	}
-	return jsn
+
+	return json
 }
