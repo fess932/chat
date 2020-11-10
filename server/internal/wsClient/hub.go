@@ -23,8 +23,8 @@ func (h *Hub) Run() {
 	for {
 		select {
 		case client := <-h.Register:
-			log.Println("client registered")
 			h.Clients[client] = true
+			log.Println("client registered, total clients:", len(h.Clients))
 
 		case client := <-h.Unregister:
 			log.Println("client unregister")
