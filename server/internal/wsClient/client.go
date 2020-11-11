@@ -129,7 +129,7 @@ func ServeWS(hub *Hub, w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	client := &Client{Hub: hub, Conn: conn, Send: make(chan []byte, 256)}
+	client := &Client{Hub: hub, Conn: conn, Send: make(chan []byte)}
 	client.Hub.Register <- client
 
 	go client.writePump()
