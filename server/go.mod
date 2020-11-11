@@ -11,6 +11,7 @@ require (
 	github.com/k0kubun/colorstring v0.0.0-20150214042306-9440f1994b88 // indirect
 	github.com/kataras/iris/v12 v12.2.0-alpha.0.20201102164808-3ed3aed717a3
 	github.com/kataras/neffos v0.0.16
+	github.com/looplab/fsm v0.2.0
 	github.com/mattn/go-colorable v0.1.8 // indirect
 	github.com/mattn/go-sqlite3 v1.14.4
 	github.com/panjf2000/ants/v2 v2.4.3 // indirect

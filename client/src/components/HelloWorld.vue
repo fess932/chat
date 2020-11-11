@@ -1,18 +1,19 @@
 <template>
-  <div>{{ player }}</div>
+  <div ref="dick" class="mem">dick</div>
+
   <button @click="move">move</button>
   <button @click="stop">stop</button>
 </template>
 
 <script lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import { Player } from './Player'
 
 export default {
   setup() {
-    const { player, move, stop } = chat()
+    const { player, move, stop, dick } = chat()
 
-    return { player, move, stop }
+    return { player, move, stop, dick }
   },
 }
 
@@ -32,22 +33,34 @@ const host = 'ws://localhost:8000/v1/ws'
 
 function chat() {
   const ws = new WebSocket(host)
+  const dick = ref(null)
 
-  {
-    ws.onclose = (ev: CloseEvent, b, c) => {
-      console.log(ev, b, c, 'onclose')
+  onMounted(() => {
+    ws.onclose = (ev: CloseEvent) => {
+      console.log(ev, 'onclose')
     }
-    ws.onerror = (ev: Event, b, c) => {
-      console.log(ev, b, c, 'onerror')
+    ws.onerror = (ev: Event) => {
+      console.log(ev, 'onerror')
     }
-    ws.onmessage = (ev: MessageEvent, b, c) => {
-      // console.log(ev, b, c, 'onmessage')
+    ws.onmessage = (ev: MessageEvent) => {
+      // console.log(ev, 'onmessage')
       console.log(ev.data)
+      const message = JSON.parse(ev.data)
+      console.log(message)
+      if (message.type === 'command') {
+        console.log('is command!')
+        if (message.body.move === 'stop') {
+          dick.value.style.left = '100px'
+        }
+        if (message.body.move === 'right') {
+          dick.value.style.left = '800px'
+        }
+      }
     }
     ws.onopen = (ev: Event) => {
       console.log(ev, 'onopen')
     }
-  }
+  })
 
   const player = reactive(Player(ws))
 
@@ -59,6 +72,14 @@ function chat() {
     player.stop()
   }
 
-  return { player, move, stop }
+  return { player, move, stop, dick }
 }
 </script>
+
+<style>
+.mem {
+  font-size: 50px;
+  position: absolute;
+  left: 100px;
+}
+</style>

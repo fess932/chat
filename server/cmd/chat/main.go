@@ -48,6 +48,8 @@ func wsHandler(app *iris.Application) {
 	hub := wsClient.NewHub()
 	go hub.Run()
 
+
+
 	app.Get("/v1/ws", func(ctx iris.Context) {
 		if err := wsClient.ServeWS(hub, ctx.ResponseWriter(), ctx.Request()); err != nil {
 			log.Println(err)
@@ -55,3 +57,4 @@ func wsHandler(app *iris.Application) {
 		}
 	})
 }
+
