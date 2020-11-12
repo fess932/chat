@@ -101,9 +101,15 @@ func sendState(ch chan []byte, state *fsm.FSM) {
 
 }
 
-func sendCommand(cmd string) {
-
-}
+//func sendCommand(cmd string) {
+//	command := &Message{
+//		Type: typeCommand,
+//		Body: map[string]string{
+//			"move": cmd,
+//		},
+//	}
+//	bMsg,
+//}
 
 func sendMessage(msg string, ch chan []byte) {
 	log.Println("send mesage..", msg)

@@ -8,10 +8,11 @@
 <script lang="ts">
 import { ref, reactive, onMounted } from 'vue'
 import { Player } from './Player'
+import ws from '../socket/socket'
 
 export default {
   setup() {
-    const { player, move, stop, dick } = chat()
+    const { player, move, stop, dick } = game()
 
     return { player, move, stop, dick }
   },
@@ -29,10 +30,7 @@ function sample() {
   return { msg, count, add }
 }
 
-const host = 'ws://localhost:8000/v1/ws'
-
-function chat() {
-  const ws = new WebSocket(host)
+function game() {
   const dick = ref(null)
 
   onMounted(() => {
@@ -43,17 +41,17 @@ function chat() {
       console.log(ev, 'onerror')
     }
     ws.onmessage = (ev: MessageEvent) => {
-      // console.log(ev, 'onmessage')
       console.log(ev.data)
       const message = JSON.parse(ev.data)
       console.log(message)
       if (message.type === 'command') {
         console.log('is command!')
+        dick.value.style.top = '250px'
         if (message.body.move === 'stop') {
-          dick.value.style.left = '100px'
+          dick.value.style.left = '30px'
         }
         if (message.body.move === 'right') {
-          dick.value.style.left = '800px'
+          dick.value.style.left = '400px'
         }
       }
     }
