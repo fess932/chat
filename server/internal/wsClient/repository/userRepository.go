@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"chat-server/models"
+	"chat-server/internal/wsClient/models"
 	"database/sql"
 	"log"
 )
