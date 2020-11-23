@@ -30,12 +30,11 @@ export default {
 <style scoped>
 .container {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 400px;
 }
 
 .game {
   background-color: chocolate;
-  width: 500px;
   height: 500px;
   border: 3px solid black;
 }

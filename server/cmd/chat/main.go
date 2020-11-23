@@ -1,7 +1,8 @@
 package main
 
 import (
-	"chat-server/internal/wsClient"
+	"chat-server/config"
+	"chat-server/internal/server/wsServer"
 	"flag"
 	"log"
 
@@ -15,6 +16,8 @@ var addr = flag.String("addr", ":8000", "http server address")
 
 func main() {
 	flag.Parse()
+
+	config.CreateRedisClient()
 
 	log.Println("prepare...")
 
@@ -45,16 +48,14 @@ func ping(_ iris.Context) {
 }
 
 func wsHandler(app *iris.Application) {
-	hub := wsClient.NewHub()
-	go hub.Run()
 
-
+	ws := wsServer.NewWebsocketServer()
+	go ws.Run()
 
 	app.Get("/v1/ws", func(ctx iris.Context) {
-		if err := wsClient.ServeWS(hub, ctx.ResponseWriter(), ctx.Request()); err != nil {
+		if err := ws.ServeWS(ctx.ResponseWriter(), ctx.Request()); err != nil {
 			log.Println(err)
 			ctx.StopWithError(400, err)
 		}
 	})
 }
-

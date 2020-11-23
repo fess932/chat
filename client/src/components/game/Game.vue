@@ -41,7 +41,6 @@ function game() {
       console.log(ev, 'onerror')
     }
     ws.onmessage = (ev: MessageEvent) => {
-      console.log(ev.data)
       const message = JSON.parse(ev.data)
       console.log(message)
       if (message.type === 'command') {
@@ -56,7 +55,7 @@ function game() {
       }
     }
     ws.onopen = (ev: Event) => {
-      console.log(ev, 'onopen')
+      console.log('onopen in game')
     }
   })
 

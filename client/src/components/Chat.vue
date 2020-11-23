@@ -1,12 +1,17 @@
 <template>
   <div class="message-container">
-    <div>{{ messages }}</div>
+    <div class="messages">
+      <div v-for="(v, k) in messages" :key="k">
+        {{ v }}
+      </div>
+    </div>
     <div class="send-message">
       <input
         v-model="message"
         class="send-message_text"
         type="text"
         placeholder="message..."
+        @keyup.prevent.enter="sendMessage"
       />
       <input
         @click="sendMessage"
@@ -21,6 +26,9 @@
 <script lang="ts">
 import ws from './socket/socket'
 import { ref, onMounted } from 'vue'
+import alarm from '../assets/sound.wav'
+
+import { Actions } from '../models/commands'
 
 export default {
   setup() {
@@ -33,23 +41,23 @@ export default {
 function chat() {
   const messages = ref([''])
   const message = ref('')
+  const alarm2 = new Audio(alarm)
 
-  function sendMessage() {
+  async function sendMessage() {
     if (message.value === '') {
       return
     }
 
     const messageSample = {
-      type: 'message',
-      body: {
-        message: message.value,
-      },
+      action: Actions.SendMessage,
+      message: message.value,
     }
 
     const msg = JSON.stringify(messageSample)
     console.log(msg)
 
     ws.send(JSON.stringify(messageSample))
+    message.value = ''
   }
 
   onMounted(() => {
@@ -66,13 +74,13 @@ function chat() {
     })
 
     ws.addEventListener('message', (ev: MessageEvent) => {
-      console.log('message:', ev.data)
       const message = JSON.parse(ev.data)
       console.log(message)
 
-      if (message.type === 'message') {
+      if (message.action === Actions.SendMessage) {
         console.log('is message!')
-        messages.value.push(message.body.message)
+        messages.value.push(message.message)
+        alarm2.play()
       }
     })
   })
@@ -104,5 +112,10 @@ function chat() {
 
 .send-message_button {
   font-size: 1.3em;
+}
+
+.messages {
+  margin-left: auto;
+  margin-right: auto;
 }
 </style>
